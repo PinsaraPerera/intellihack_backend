@@ -1,0 +1,13 @@
+.venv
+.env
+/*.bin
+*.bin
+*.json
+/__pycache__/
+__pycache__/
+test.yml
+test1.yml
+data
+cloud-run.yml
+model.py
+vectorstores
