@@ -11,3 +11,4 @@ data
 cloud-run.yml
 model.py
 vectorstores
+app.log

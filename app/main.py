@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 from app.db.base import Base
 from app.db.session import engine
 from app.api.endpoints import authentication, users, query, train
+from app.core.config import redis_client
 
 app = FastAPI()
 
@@ -18,6 +20,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.add_middleware(SessionMiddleware, secret_key="!secret")
 
 Base.metadata.create_all(bind=engine)
 

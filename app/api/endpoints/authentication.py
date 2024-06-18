@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from app import schemas, db, models, utils
 from sqlalchemy.orm import Session
+from app.core.gcp_utils import create_folder_in_gcp
 
 router = APIRouter(
     tags=["Authentication"],
@@ -16,4 +17,8 @@ def login(request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Incorrect Password")
         
     access_token = utils.token.create_access_token(data={"sub": user.email})
+
+    # Create a folder in the GCS bucket for the user
+    create_folder_in_gcp(user.email)
+    
     return {"access_token": access_token, "token_type": "bearer"}
