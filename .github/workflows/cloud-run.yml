@@ -105,7 +105,8 @@ jobs:
             --image $IMAGE \
             --region ${{ secrets.REGION }} \
             --platform managed \
-            --allow-unauthenticated
+            --allow-unauthenticated\
+            --port 6379 \
             --set-env-vars PORT=6379
 
       - name: Deploy FastAPI to Cloud Run

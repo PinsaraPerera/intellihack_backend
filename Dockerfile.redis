@@ -1,12 +1,8 @@
 # Use the official Redis image from the Docker Hub
 FROM redis:latest
 
-# Copy custom redis configuration file
-COPY redis.conf /usr/local/etc/redis/redis.conf
-
 # Expose the port that Redis runs on
 EXPOSE 6379
 
-# Command to start Redis with custom configuration
-CMD ["redis-server", "/usr/local/etc/redis/redis.conf"]
-
+# Command to start Redis with custom port and bind configuration
+CMD ["redis-server", "--port", "6379", "--bind", "0.0.0.0"]
