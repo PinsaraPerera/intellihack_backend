@@ -17,6 +17,17 @@ router = APIRouter(
 def chat(chat: query_schema.QueryCreate, request: Request,  db: Session = Depends(get_db)):
     return query.create_query(db, chat, request)
 
+@router.post("/graphGenerate", response_model=query_schema.QueryBase)
+def graphGenerate(chat: query_schema.QueryGraphGenerate, request: Request,  db: Session = Depends(get_db)):
+    return query.generate_graph_notation(db, chat, request)
+
+@router.post("/summary", response_model=query_schema.QueryBase)
+def summary(chat: query_schema.QuerySummaryGenerate, request: Request,  db: Session = Depends(get_db)):
+    return query.generate_summary(db, chat, request)
+
+@router.post("/getBothGraphAndSummary", response_model=query_schema.CustomResponse)
+def getBothGraphAndSummary(chat: query_schema.QuerySummaryGenerate, request: Request,  db: Session = Depends(get_db)):
+    return query.generate_summary_and_graph(db, chat, request)
 
 @router.get(
     "/history/{user_id}/{limit}", response_model=List[query_schema.QueryResponse]

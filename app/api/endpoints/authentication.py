@@ -19,6 +19,9 @@ def login(request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(
     access_token = utils.token.create_access_token(data={"sub": user.email})
 
     # Create a folder in the GCS bucket for the user
-    create_folder_in_gcp(user.email)
-    
+    try:
+        create_folder_in_gcp(user.email)
+    except RuntimeError as e:
+        print(f"An error occurred: {e}")
+
     return {"access_token": access_token, "token_type": "bearer"}

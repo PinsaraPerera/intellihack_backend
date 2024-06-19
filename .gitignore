@@ -6,9 +6,9 @@
 /__pycache__/
 __pycache__/
 test.yml
+test.py
 test1.yml
 data
-cloud-run.yml
 model.py
 vectorstores
 app.log

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -10,10 +10,24 @@ class QueryBase(BaseModel):
 
 class QueryCreate(BaseModel):
     user_id: int
+    username: str
     message: str
     history: Optional[str] = None
+
+class QueryGraphGenerate(BaseModel):
+    user_id: int
+    username: str
+    message: str
+
+class QuerySummaryGenerate(QueryGraphGenerate):
+    pass
 
 class QueryResponse(BaseModel):
     message: str
     response: str
     date_created: datetime
+
+class CustomResponse(BaseModel):
+    user_id: int
+    message: str
+    response: Dict[str, Optional[str]]

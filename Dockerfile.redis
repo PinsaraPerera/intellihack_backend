@@ -1,0 +1,5 @@
+# Use the official Redis image from the Docker Hub
+FROM redis:latest
+
+# Expose the port that Redis runs on
+EXPOSE 6379
