@@ -69,7 +69,7 @@ jobs:
 
       - name: Build and push FastAPI Docker image
         run: |
-          IMAGE=gcr.io/${{ secrets.PROJECT_ID }}/intellihack_backend:$GITHUB_SHA
+          IMAGE=gcr.io/${{ secrets.PROJECT_ID }}/intellihack-backend:$GITHUB_SHA
           docker build -t $IMAGE .
           docker push $IMAGE
 
@@ -111,8 +111,8 @@ jobs:
       - name: Deploy FastAPI to Cloud Run
         run: |
           REDIS_SERVICE_URL=$(gcloud run services describe redis --platform managed --region ${{ secrets.REGION }} --format 'value(status.url)')
-          IMAGE=gcr.io/${{ secrets.PROJECT_ID }}/fastapi-app:$GITHUB_SHA
-          gcloud run deploy intellihack_backend \
+          IMAGE=gcr.io/${{ secrets.PROJECT_ID }}/intellihack-backend:$GITHUB_SHA
+          gcloud run deploy intellihackAPI \
             --image $IMAGE \
             --region ${{ secrets.REGION }} \
             --platform managed \
