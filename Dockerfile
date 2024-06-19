@@ -5,14 +5,17 @@ FROM python:3.10-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+# Set the Google application credentials environment variable
+ENV GOOGLE_APPLICATION_CREDENTIALS=/app/keys/service_account.json
+
+# Create and set the working directory
+WORKDIR /app
+
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
     libpq-dev \
     redis-server
-
-# Set the working directory
-WORKDIR /app
 
 # Copy the requirements file
 COPY requirements.txt .
@@ -23,7 +26,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the project files to the working directory
 COPY . .
 
-# Expose the port for FastAPI
+# Copy the service account key into the container
+COPY gcloud-service-key.json /app/keys/service_account.json
+
+# Expose the port that the app runs on
 EXPOSE 8000
 
 # Copy the entrypoint script
