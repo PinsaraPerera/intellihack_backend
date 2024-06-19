@@ -35,7 +35,7 @@ jobs:
           path: .env
 
   build-and-push-gcr-image:
-    name: Build and Push Docker Images
+    name: Build and Push Docker Image
     needs: integration
     runs-on: ubuntu-latest
 
@@ -67,16 +67,10 @@ jobs:
         run: |
           gcloud auth configure-docker --quiet
 
-      - name: Build and push FastAPI Docker image
+      - name: Build and push Docker image
         run: |
           IMAGE=gcr.io/${{ secrets.PROJECT_ID }}/intellihack-backend:$GITHUB_SHA
           docker build -t $IMAGE .
-          docker push $IMAGE
-
-      - name: Build and push Redis Docker image
-        run: |
-          IMAGE=gcr.io/${{ secrets.PROJECT_ID }}/redis:$GITHUB_SHA
-          docker build -t $IMAGE -f Dockerfile.redis .
           docker push $IMAGE
 
   continuous-deployment:
@@ -98,19 +92,8 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0.2.0
 
-      - name: Deploy Redis to Cloud Run
+      - name: Deploy to Cloud Run
         run: |
-          IMAGE=gcr.io/${{ secrets.PROJECT_ID }}/redis:$GITHUB_SHA
-          gcloud run deploy redis \
-            --image $IMAGE \
-            --region ${{ secrets.REGION }} \
-            --platform managed \
-            --allow-unauthenticated\
-            --port 6379
-
-      - name: Deploy FastAPI to Cloud Run
-        run: |
-          REDIS_SERVICE_URL=$(gcloud run services describe redis --platform managed --region ${{ secrets.REGION }} --format 'value(status.url)')
           IMAGE=gcr.io/${{ secrets.PROJECT_ID }}/intellihack-backend:$GITHUB_SHA
           gcloud run deploy intellihack-backend \
             --image $IMAGE \
@@ -118,5 +101,5 @@ jobs:
             --platform managed \
             --allow-unauthenticated \
             --port 8000 \
-            --set-env-vars PROJECT_ID=${{ secrets.PROJECT_ID }},REGION=${{ secrets.REGION }},DB_USER=${{ secrets.DB_USER }},DB_PASS=${{ secrets.DB_PASS }},DB_NAME=${{ secrets.DB_NAME }},GOOGLE_APPLICATION_CREDENTIALS=/app/keys/service_account.json,REDIS_HOST=$REDIS_SERVICE_URL,REDIS_PORT=6379 \
+            --set-env-vars PROJECT_ID=${{ secrets.PROJECT_ID }},REGION=${{ secrets.REGION }},DB_USER=${{ secrets.DB_USER }},DB_PASS=${{ secrets.DB_PASS }},DB_NAME=${{ secrets.DB_NAME }},GOOGLE_APPLICATION_CREDENTIALS=/app/keys/service_account.json \
             --project ${{ secrets.PROJECT_ID }}
