@@ -106,6 +106,8 @@ jobs:
             --region ${{ secrets.REGION }} \
             --platform managed \
             --allow-unauthenticated
+            --port 6379 \
+            --project ${{ secrets.PROJECT_ID }}
 
       - name: Deploy FastAPI to Cloud Run
         run: |
