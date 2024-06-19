@@ -4,11 +4,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Redis client setup
-# Redis client setup
-redis_host = os.getenv("REDIS_HOST", "localhost")
-redis_port = int(os.getenv("REDIS_PORT", 6379))
+# Redis cloud client setup
+# redis_host = os.getenv("REDIS_HOST", "localhost")
+# redis_port = int(os.getenv("REDIS_PORT", 6379))
+# redis_client = Redis(host=redis_host, port=redis_port, db=0)
+
+# Redis local client setup
+redis_host = "localhost"
+redis_port = 6379
 redis_client = Redis(host=redis_host, port=redis_port, db=0)
+
 
 BUCKET_NAME = os.getenv("BUCKET_NAME")
 DATA_FOLDER = "data"
