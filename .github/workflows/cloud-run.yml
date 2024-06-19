@@ -112,7 +112,7 @@ jobs:
         run: |
           REDIS_SERVICE_URL=$(gcloud run services describe redis --platform managed --region ${{ secrets.REGION }} --format 'value(status.url)')
           IMAGE=gcr.io/${{ secrets.PROJECT_ID }}/intellihack-backend:$GITHUB_SHA
-          gcloud run deploy intellihackAPI \
+          gcloud run deploy intellihack-backend \
             --image $IMAGE \
             --region ${{ secrets.REGION }} \
             --platform managed \
