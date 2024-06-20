@@ -8,14 +8,26 @@ router = APIRouter(
     tags=["Authentication"],
 )
 
+
 @router.post("/login")
-def login(request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(db.session.get_db)):
-    user = db.query(models.user.User).filter(models.user.User.email == request.username).first()
+def login(
+    request: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(db.session.get_db),
+):
+    user = (
+        db.query(models.user.User)
+        .filter(models.user.User.email == request.username)
+        .first()
+    )
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Credentials")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Credentials"
+        )
     if not utils.hashing.Hash.verify(user.password, request.password):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Incorrect Password")
-        
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Incorrect Password"
+        )
+
     access_token = utils.token.create_access_token(data={"sub": user.email})
 
     # Create a folder in the GCS bucket for the user
@@ -24,4 +36,10 @@ def login(request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(
     except RuntimeError as e:
         print(f"An error occurred: {e}")
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+    }
