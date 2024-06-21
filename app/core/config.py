@@ -64,17 +64,44 @@ Paragraph :
 """
 
 templates = {
-    "qa": {
-        "system": qa_system_template,
-        "human": qa_human_template,
-    },
-    "graph": {
-        "system": graph_system_template,
-        "human": graph_human_template,
-    },
-    "summary": {
-        "system": summary_system_template,
-        "human": summary_human_template,
-    }
+    "qa": [
+        {
+            "system": qa_system_template,
+            "human": qa_human_template,
+        },
+    ],
+    "graph": [
+        {
+            "difficulty": "easy",
+            "system": graph_system_template,
+            "human": graph_human_template,
+        },
+        {
+            "difficulty": "medium",
+            "system": graph_system_template,
+            "human": graph_human_template,
+        },
+        {
+            "difficulty": "hard",
+            "system": graph_system_template,
+            "human": graph_human_template,
+        },
+    ],
+    "summary": [
+        {
+            "difficulty": "easy",
+            "system": summary_system_template,
+            "human": summary_human_template,
+        },
+        {
+            "difficulty": "medium",
+            "system": summary_system_template,
+            "human": summary_human_template,
+        },
+        {
+            "difficulty": "hard",
+            "system": summary_system_template,
+            "human": summary_human_template,
+        },
+    ],
 }
-

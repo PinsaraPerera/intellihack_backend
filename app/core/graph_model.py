@@ -23,14 +23,17 @@ from app.core.config import templates
 
 graph_template = templates["graph"]
 
-system_template = graph_template["system"]
-human_template = graph_template["human"]
 
-
-def set_custom_prompt():
+def set_custom_prompt(difficulty: int):
     """
     Prompt template for QA retrieval for each vectorstore
     """
+
+    if difficulty not in [1, 2, 3]:
+        difficulty = 1
+
+    system_template = graph_template[difficulty - 1]["system"]
+    human_template = graph_template[difficulty - 1]["human"]
 
     system_message_template = SystemMessagePromptTemplate.from_template(system_template)
     human_message_template = HumanMessagePromptTemplate.from_template(human_template)
@@ -74,8 +77,8 @@ class CustomHandler(BaseCallbackHandler):
         logger.info(f"Prompt:\n{formatted_prompts}")
 
 
-def final_result(query, request: Request):
-    prompt = set_custom_prompt()
+def final_result(query, difficulty, request: Request):
+    prompt = set_custom_prompt(difficulty)
     chain = qa_bot(prompt)
     input_data = {"Scenario": query}
     chain_response = chain.invoke(input_data, config={"callbacks": [CustomHandler()]})
