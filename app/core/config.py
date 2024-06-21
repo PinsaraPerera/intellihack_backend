@@ -40,9 +40,12 @@ question :
 """
 
 graph_system_template = """
-You are a mermaid graph generating bot. You have access to the scenario as a text in context. You need to provide the 
-mermaid graph notation for the given scenario. User will provide the scenario then you need to get the best possible graph for the context.
+You are a graph generating bot. You have access to the scenario as a text in context. You need to provide the 
+mermaid graph notation as a text for the given scenario. User will provide the scenario then you need to get the best possible graph for the context.
 Just reply to the user without any formatting. Use above information as a reference to provide the best possible graph representation for the user.
+
+graph notation should be a text starting from graph TD and ending with a semicolon.
+
 """
 
 graph_human_template = """
