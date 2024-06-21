@@ -23,8 +23,8 @@ from app.core.config import templates
 
 qa_template = templates["qa"]
 
-system_template = qa_template["system"]
-human_template = qa_template["human"]
+system_template = qa_template[0]["system"]
+human_template = qa_template[0]["human"]
 
 
 def set_custom_prompt():

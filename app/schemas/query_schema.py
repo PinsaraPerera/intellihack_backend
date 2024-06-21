@@ -4,7 +4,6 @@ from datetime import datetime
 
 class QueryBase(BaseModel):
     user_id: int
-    message: str
     response: str
     date_created: datetime
 
@@ -18,6 +17,7 @@ class QueryGraphGenerate(BaseModel):
     user_id: int
     username: str
     message: str
+    difficulty: Optional[int] = None
 
 class QuerySummaryGenerate(QueryGraphGenerate):
     pass
@@ -29,5 +29,4 @@ class QueryResponse(BaseModel):
 
 class CustomResponse(BaseModel):
     user_id: int
-    message: str
     response: Dict[str, Optional[str]]

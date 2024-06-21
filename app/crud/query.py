@@ -37,7 +37,7 @@ def create_query(db: Session, chat: query_schema.QueryCreate, request: Request):
 def generate_graph_notation(
     db: Session, chat: query_schema.QueryGraphGenerate, request: Request
 ):
-    response = graph_final_result(chat.message, request)
+    response = graph_final_result(chat.message, chat.difficulty, request)
 
     if not response:
         raise HTTPException(
@@ -60,7 +60,7 @@ def generate_graph_notation(
 def generate_summary(
     db: Session, chat: query_schema.QuerySummaryGenerate, request: Request
 ):
-    response = summary_final_result(chat.message, request)
+    response = summary_final_result(chat.message, chat.difficulty, request)
 
     if not response:
         raise HTTPException(
@@ -80,8 +80,8 @@ def generate_summary(
     return new_query
 
 def generate_summary_and_graph(db: Session, chat: query_schema.QuerySummaryGenerate, request: Request):
-    summary = summary_final_result(chat.message, request)
-    graph_notation = graph_final_result(chat.message, request)
+    summary = summary_final_result(chat.message, chat.difficulty, request)
+    graph_notation = graph_final_result(chat.message, chat.difficulty, request)
 
     if not summary or not graph_notation:
         raise HTTPException(
