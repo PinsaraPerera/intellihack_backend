@@ -30,3 +30,4 @@ class QueryResponse(BaseModel):
 class CustomResponse(BaseModel):
     user_id: int
     response: Dict[str, Optional[str]]
+    date_created: datetime
