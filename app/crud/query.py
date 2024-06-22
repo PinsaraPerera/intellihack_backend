@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 import app.models.query as query
 from app.schemas import query_schema
+from datetime import datetime
 from fastapi import HTTPException, status, Request
 from app.core.qa_model import final_result as qa_final_result
 from app.core.graph_model import final_result as graph_final_result
@@ -105,7 +106,8 @@ def generate_summary_and_graph(db: Session, chat: query_schema.QuerySummaryGener
         response={
             "summary": summary,
             "graph_notation": graph_notation
-        }
+        },
+        date_created=datetime.utcnow()
     )
 
     return response

@@ -1,5 +1,5 @@
 from typing import List, Optional, Dict
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 
 class QueryBase(BaseModel):
@@ -30,4 +30,4 @@ class QueryResponse(BaseModel):
 class CustomResponse(BaseModel):
     user_id: int
     response: Dict[str, Optional[str]]
-    date_created: datetime
+    date_created: datetime = Field(default_factory=datetime.utcnow)
