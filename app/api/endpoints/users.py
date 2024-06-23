@@ -25,3 +25,7 @@ def get_user(id: int, db: Session = Depends(get_db)):
 @router.get("/email/{email}", response_model=user_schema.User)
 def get_user_by_email(email: str, db: Session = Depends(get_db)):
     return user.show_by_email(email, db)
+
+@router.put("/update/{id}", response_model=user_schema.User)
+def update_user(id: int, request: user_schema.User, db: Session = Depends(get_db)):
+    return user.update_user(id, request, db)
