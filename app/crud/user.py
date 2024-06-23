@@ -16,6 +16,7 @@ def create(request: user_schema.User, db: Session):
         name=request.name,
         email=request.email,
         password=hashing.Hash.bcrypt(request.password),
+        vectorstore=request.vectorstore,
     )
 
     db.add(new_user)
@@ -40,4 +41,19 @@ def show_by_email(email: str, db: Session):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User with email {email} not found",
         )
+    return user_found
+
+def update_user(id: int, request: user_schema.User, db: Session):
+    user_found = db.query(user.User).filter(user.User.id == id).first()
+    if not user_found:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {id} not found"
+        )
+
+    user_found.name = request.name
+    user_found.vectorstore = request.vectorstore
+
+    db.add(user_found)
+    db.commit()
+    db.refresh(user_found)
     return user_found

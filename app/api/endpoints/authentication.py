@@ -42,4 +42,5 @@ def login(
         "id": user.id,
         "name": user.name,
         "email": user.email,
+        "vectorstore": user.vectorstore,
     }

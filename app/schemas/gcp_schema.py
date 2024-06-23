@@ -12,3 +12,9 @@ class StorageResponse(BaseModel):
     user_id: int
     message: str
     response: str
+
+class VectorStore(BaseModel):
+    id: int
+    name: str
+    email: str
+    vectorstore: bool
