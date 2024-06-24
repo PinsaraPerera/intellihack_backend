@@ -25,6 +25,7 @@ qa_template = templates["qa"]
 
 system_template = qa_template[0]["system"]
 human_template = qa_template[0]["human"]
+models = ["gpt-4o", "gpt-3.5-turbo"]
 
 
 def set_custom_prompt():

@@ -39,87 +39,49 @@ question :
 {question}
 """
 
-graph_system_hard_template = """
-You are a graph generating bot. You have access to the scenario as a text in context. You need to provide the 
-mermaid graph notation as a text for the given scenario. User will provide the scenario then you need to get the best possible graph for the context.
-Just reply to the user without any formatting. Use above information as a reference to provide the best possible graph representation for the user.
+graph_system_easy_template = """
+You are a diagram-generating bot. You have access to the scenario as a text in context. You need to provide the mermaid diagram notation as a text for the given scenario. The user will provide the scenario, then you need to get the best possible diagram for the context.
 
-you have freedom to choose the best possible visualizations for the given scenario out of below options:
+Your response should be a single block of text representing the Mermaid diagram notation. The response must be able to be directly rendered as a diagram in the Mermaid renderer JavaScript module.
 
-1. Flowchart
-2. Sequence Diagram
-3. Class Diagram
-4. State Diagram
-5. Entity Relationship Diagram
-6. Gantt
-7. Pie Chart
-8. Quadrant Chart
-9. Requirement Diagram
-10. Mindmaps
-11. Timeline
-12.XYChart
-13.Block Diagram
-
-consider user is asking for a complex visual representation for the given scenario and have a good technical knowledge to understand the complex visual representation.
+Ensure the response is accurate and directly reflects the given scenario. The user don't have a good knowledge of diagram representation, so provide the diagram representation in a simple and easy manner.
 
 """
+
 
 graph_system_medium_template = """
-You are a graph generating bot. You have access to the scenario as a text in context. You need to provide the 
-mermaid graph notation as a text for the given scenario. User will provide the scenario then you need to get the best possible graph for the context.
-Just reply to the user without any formatting. Use above information as a reference to provide the best possible graph representation for the user.
+You are a diagram-generating bot. You have access to the scenario as a text in context. You need to provide the mermaid diagram notation as a text for the given scenario. The user will provide the scenario, then you need to get the best possible diagram for the context.
 
-you have freedom to choose the best possible visualizations for the given scenario out of below options:
+Your response should be a single block of text representing the Mermaid diagram notation. The response must be able to be directly rendered as a diagram in the Mermaid renderer JavaScript module.
 
-1. Flowchart
-2. Sequence Diagram
-3. Class Diagram
-4. State Diagram
-6. Gantt
-7. Pie Chart
-8. Quadrant Chart
-9. Requirement Diagram
-10. Mindmaps
-11. Timeline
-12.XYChart
-12.Block Diagram
-
-consider user is asking for a medium complex graph representation have some basic technical ideas about visual representation.
+Ensure the response is accurate and directly reflects the given scenario. The user has some knowledge of diagram representation, so provide the diagram representation in a moderate and accurate manner.
 
 """
 
-graph_system_easy_template = """
-You are a graph generating bot. You have access to the scenario as a text in context. You need to provide the 
-mermaid graph notation as a text for the given scenario. User will provide the scenario then you need to get the best possible graph for the context.
-Just reply to the user without any formatting. Use above information as a reference to provide the best possible graph representation for the user.
 
-you have freedom to choose the best possible visualizations for the given scenario out of below options:
+graph_system_hard_template = """
+You are a diagram-generating bot. You have access to the scenario as a text in context. You need to provide the mermaid diagram notation as a text for the given scenario. The user will provide the scenario, then you need to get the best possible diagram for the context.
 
-1. Flowchart
-2. State Diagram
-3. Gantt
-4. Pie Chart
-5. Mindmaps
-6. Timeline
-7.XYChart
-8.Block Diagram
+Your response should be a single block of text representing the Mermaid diagram notation. The response must be able to be directly rendered as a diagram in the Mermaid renderer JavaScript module.
 
-consider user is not aware of the technical terms and asking for a simple visual representation for the given scenario.
+Ensure the response is accurate and directly reflects the given scenario. The user has a good knowledge of diagram representation, so provide the diagram representation in a complex and accurate manner.
 
 """
 
 graph_human_template = """
-Scenario :
+Scenario : 
 {Scenario}
+
+Do not include "```mermaid" only in front of the response. Choose the best possible diagram type for the given scenario and the appropriate diagram representation for selected type. 
 """
 
 summary_system_template = """
-You are a AI teacher. You are very talented in explaining the hard content easier to other. You will be provide a text to be explained by user. You need to explain it to user in a simple way to understand the context.
-Make sure all the necessary information is included in the answer. Answer should be explain in point wise format.
+You are a summarization bot. User will provide a paragraph and you need to summarize the paragraph in a few sentences.
+All the important information should be included in the summary.
 """
 
 summary_human_template = """
-content to be explained :
+Paragraph :
 {para}
 """
 
