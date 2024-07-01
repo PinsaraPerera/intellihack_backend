@@ -17,6 +17,10 @@ router = APIRouter(
 def chat(chat: query_schema.QueryCreate, request: Request,  db: Session = Depends(get_db)):
     return query.create_query(db, chat, request)
 
+@router.post("/quiz", response_model=query_schema.QuizBase)
+def quiz(chat: query_schema.QuizCreate, request: Request,  db: Session = Depends(get_db)):
+    return query.create_quiz(chat, request)
+
 @router.post("/graphGenerate", response_model=query_schema.QueryBase)
 def graphGenerate(chat: query_schema.QueryGraphGenerate, request: Request,  db: Session = Depends(get_db)):
     return query.generate_graph_notation(db, chat, request)

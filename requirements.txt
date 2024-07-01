@@ -11,6 +11,8 @@ python-multipart
 uvicorn
 openai
 tiktoken
+crewai
+crewai[tools]
 unstructured
 python-dotenv
 langchain-huggingface
@@ -26,3 +28,4 @@ bcrypt==4.1.3
 python-jose==3.3.0
 redis
 itsdangerous
+langsmith

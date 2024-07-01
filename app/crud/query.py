@@ -6,7 +6,8 @@ from fastapi import HTTPException, status, Request
 from app.core.qa_model import final_result as qa_final_result
 from app.core.graph_model import final_result as graph_final_result
 from app.core.summarise_model import final_result as summary_final_result
-
+from app.quizGeneratingAgent.main import main as quiz_main
+import json
 
 def create_query(db: Session, chat: query_schema.QueryCreate, request: Request):
 
@@ -125,3 +126,30 @@ def get_history(db: Session, user_id: int, limit: int):
             detail=f"History for user with id {user_id} not found",
         )
     return history
+
+def create_quiz(chat: query_schema.QuizCreate, request: Request):
+
+    response = quiz_main(no_of_questions=chat.no_of_questions, request=request, user_email=chat.username)
+
+    if not response:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Response not found. Try again later.",
+        )
+
+    if isinstance(response, str):
+        response = json.loads(response)
+
+    questions_data = response.get("questions", [])
+
+    response_model = query_schema.Response(
+        questions=questions_data
+    )
+
+    questions = query_schema.QuizBase(
+        user_id=chat.user_id,
+        response=response_model,
+        date_created=datetime.utcnow()
+    )
+
+    return questions
