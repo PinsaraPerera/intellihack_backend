@@ -8,7 +8,7 @@ from langchain_community.vectorstores import FAISS
 from .config import redis_client
 from pathlib import Path
 from dotenv import load_dotenv
-from .gcp_utils import download_from_gcp, upload_to_gcp
+from .gcp_utils import download_from_gcp, upload_to_gcp, download_file_from_gcp
 from logging_config import logger
 from google.cloud.exceptions import GoogleCloudError
 from .config import BUCKET_NAME, DATA_FOLDER, VECTOR_STORE_FOLDER, RESOURCE_FOLDER
@@ -122,6 +122,45 @@ def create_vector_db_gcp(user_email):
         try:
             # Download the data from the GCS bucket
             download_from_gcp(BUCKET_NAME, resources_folder, temp_dir)
+            logger.info(f"Downloaded user data for {user_email} to {temp_dir}")
+
+            # Create a local vector database
+            db_faiss_path = Path(temp_dir, VECTOR_STORE_FOLDER)
+            create_vector_db_locally(temp_dir, db_faiss_path)
+
+            # Upload the vector database to the GCS bucket
+            upload_to_gcp(BUCKET_NAME, db_faiss_path, user_vector_store_folder)
+            logger.info(
+                f"Uploaded vector database for {user_email} to {BUCKET_NAME}/{user_vector_store_folder}"
+            )
+        except RuntimeError as e:
+            logger.error(f"Failed to process data for user {user_email}: {e}")
+            raise
+        except Exception as e:
+            logger.error(
+                f"An unexpected error occurred while processing data for user {user_email}: {e}"
+            )
+            raise RuntimeError("Failed to process user data") from e
+
+
+def create_vector_db_for_selected_pdfs(user_email, pdf_list):
+    """
+    Process user data by downloading resources from GCP, creating a vector database, and uploading it back to GCP.
+
+    :param user_email: The email of the user.
+    :raises RuntimeError: If any step in processing user data fails.
+    """
+    user_folder = f"{DATA_FOLDER}/{user_email}"
+    resources_folder = f"{user_folder}/{RESOURCE_FOLDER}"
+    user_vector_store_folder = f"{user_folder}/{VECTOR_STORE_FOLDER}"
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        try:
+            # Download the data from the GCS bucket
+            for pdf in pdf_list:
+                download_file_from_gcp(BUCKET_NAME, f"{resources_folder}/{pdf}", temp_dir)
+                logger.info(f"Downloaded file {pdf} for {user_email}")
+            
             logger.info(f"Downloaded user data for {user_email} to {temp_dir}")
 
             # Create a local vector database

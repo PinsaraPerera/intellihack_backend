@@ -55,6 +55,43 @@ def download_from_gcp(bucket_name, source_folder_path, local_dest_path):
         raise
 
 
+def download_file_from_gcp(bucket_name, source_file_path, local_dest_path):
+    """
+    Download a specific file from a Google Cloud Storage bucket to a local directory.
+
+    :param bucket_name: The name of the GCS bucket.
+    :param source_file_path: The path to the file in the bucket to download.
+    :param local_dest_path: The local directory to download the file to.
+    """
+    client = storage.Client()
+
+    try:
+        bucket = client.bucket(bucket_name)
+        blob = bucket.blob(source_file_path)
+
+        if not blob.exists():
+            logger.warning(f"File {source_file_path} not found in {bucket_name}")
+            return
+
+        dest_file_path = os.path.join(
+            local_dest_path, os.path.basename(source_file_path)
+        )
+        os.makedirs(os.path.dirname(dest_file_path), exist_ok=True)
+        blob.download_to_filename(dest_file_path)
+        logger.info(f"Downloaded {blob.name} to {dest_file_path}")
+
+    except GoogleCloudError as e:
+        logger.error(
+            f"Failed to download file {source_file_path} from {bucket_name}: {e}"
+        )
+        raise RuntimeError(
+            f"Failed to download file {source_file_path} from {bucket_name}"
+        ) from e
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}")
+        raise
+
+
 def upload_to_gcp(bucket_name, source_folder_path, destination_folder_path):
     """
     Uploads all files from a local folder to a specified folder in the Google Cloud Storage bucket.
@@ -141,7 +178,7 @@ def create_folder_in_gcp(user_email: str):
         raise
 
 
-def delete_pdf_from_gcp(bucket_name, file_path):
+def delete_pdf_from_gcp(user_email, pdf_file_names, bucket_name=BUCKET_NAME):
     """
     Delete a specific PDF from the Google Cloud Storage bucket.
 
@@ -152,10 +189,48 @@ def delete_pdf_from_gcp(bucket_name, file_path):
     """
     client = storage.Client()
     bucket = client.bucket(bucket_name)
-    blob = bucket.blob(file_path)
 
-    if blob.exists():
-        blob.delete()
-        print(f"Deleted {file_path} from {bucket_name}")
-    else:
-        print(f"The file {file_path} does not exist in {bucket_name}")
+    for pdf_file_name in pdf_file_names:
+        FILE_PATH = f"data/{user_email}/resources/{pdf_file_name}"
+
+        blob = bucket.blob(FILE_PATH)
+
+        if blob.exists():
+            blob.delete()
+            print(f"Deleted {FILE_PATH} from {bucket_name}")
+        else:
+            print(f"The file {FILE_PATH} does not exist in {bucket_name}")
+
+
+def list_pdfs(user_email, bucket_name=BUCKET_NAME):
+    """
+    List all PDF files in a specified folder in the Google Cloud Storage bucket.
+
+    :param bucket_name: The name of the GCS bucket.
+    :param source_folder_path: The path to the folder in the bucket to list PDF files from.
+    :return: A list of PDF file paths.
+    """
+    FILE_PATH = f"data/{user_email}/resources"
+
+    client = storage.Client()
+    bucket = client.bucket(bucket_name)
+
+    try:
+        blobs = bucket.list_blobs(prefix=FILE_PATH)
+        pdf_files = [blob.name for blob in blobs if blob.name.endswith(".pdf")]
+
+        if not pdf_files:
+            logger.warning(f"No PDF files found in {bucket_name}/{FILE_PATH}")
+            return []
+
+        logger.info(f"Found {len(pdf_files)} PDF files in {bucket_name}/{FILE_PATH}")
+        return pdf_files
+
+    except GoogleCloudError as e:
+        logger.error(f"Failed to list PDF files from {bucket_name}/{FILE_PATH}: {e}")
+        raise RuntimeError(
+            f"Failed to list PDF files from {bucket_name}/{FILE_PATH}"
+        ) from e
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}")
+        raise
