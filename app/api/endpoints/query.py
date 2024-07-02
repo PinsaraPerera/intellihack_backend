@@ -14,8 +14,12 @@ router = APIRouter(
 
 
 @router.post("/chat", response_model=query_schema.QueryBase)
-def chat(chat: query_schema.QueryCreate, request: Request,  db: Session = Depends(get_db)):
-    return query.create_query(db, chat, request)
+async def chat(chat: query_schema.QueryCreate, request: Request,  db: Session = Depends(get_db)):
+    return await query.create_query(db, chat, request)
+
+@router.post("/quiz", response_model=query_schema.QuizBase)
+def quiz(chat: query_schema.QuizCreate, request: Request,  db: Session = Depends(get_db)):
+    return query.create_quiz(chat, request)
 
 @router.post("/graphGenerate", response_model=query_schema.QueryBase)
 def graphGenerate(chat: query_schema.QueryGraphGenerate, request: Request,  db: Session = Depends(get_db)):
@@ -41,9 +45,21 @@ def get_history(
     return query.get_history(db, user_id, limit)
 
 @router.get("/clear-session")
-def clear_session(request: Request):
-    session_id = request.session.get('session_id')
-    if session_id:
-        redis_client.delete(session_id)
-    request.session.clear()
-    return {"message": "Session cleared"}
+async def clear_user_session(request: Request):
+    session_id = request.cookies.get("session_id")
+    if not session_id:
+        raise HTTPException(status_code=400, detail="No session ID found in request")
+
+    try:
+        # Check if the session ID exists in Redis
+        session_key_index = f"{session_id}_index"
+        session_key_metadata = f"{session_id}_metadata"
+        if not await redis_client.exists(session_key_index) and not await redis_client.exists(session_key_metadata):
+            return {"message": "Session key not found"}
+
+        # Delete the session key
+        await redis_client.delete(session_key_index)
+        await redis_client.delete(session_key_metadata)
+        return {"message": f"Session data cleared for session_id: {session_id}"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to clear session data")

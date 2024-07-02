@@ -6,7 +6,9 @@ from google.cloud import storage
 from fastapi import HTTPException, status
 import datetime
 import app.models.user as user
-from app.core.openAI_embeddings import create_vector_db_gcp
+from app.core.openAI_embeddings import create_vector_db_gcp, create_vector_db_for_selected_pdfs
+from app.core.gcp_utils import delete_pdf_from_gcp, list_pdfs
+
 
 
 def upload(params: gcp_schema.StorageBase, data_folder: str, resource_folder: str):
@@ -39,6 +41,34 @@ def setup_vectorStore(
             )
 
         create_vector_db_gcp(params.email)
+
+        user_found.vectorstore = True
+
+        db.add(user_found)
+        db.commit()
+        db.refresh(user_found)
+        return user_found
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to setup vector store for user {params.email}: {e}",
+        )
+
+
+def setup_vectorStoreWithPdf(
+    params: gcp_schema.VectorStoreFiles, data_folder: str, vector_folder: str, db: Session
+):
+
+    try:
+        user_found = db.query(user.User).filter(user.User.id == params.id).first()
+        if not user_found:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User with id {id} not found",
+            )
+
+        create_vector_db_for_selected_pdfs(params.email, params.filenames)
 
         user_found.vectorstore = True
 
@@ -87,3 +117,26 @@ def generate_signed_url(params: gcp_schema.StorageCreate, data_folder: str):
     }
 
     return response
+
+def delete(params: gcp_schema.DeleteFile):
+    try:
+        delete_pdf_from_gcp(params.username, params.filenames)
+        response = gcp_schema.Response( message = "Files deleted successfully")
+        return response
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to delete files: {e}",
+        )
+
+def list_files(params: gcp_schema.StorageBase):
+    try:
+        files = list_pdfs(params.username)
+        files = [file.split("/")[-1] for file in files]
+        response = gcp_schema.FileList(user_id = params.user_id, filenames = files)
+        return response
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to list files: {e}",
+        )
