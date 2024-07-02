@@ -10,27 +10,6 @@ import aioredis
 from app.core.config import redis_client
 from logging_config import logger
 
-# class RedisSessionMiddleware(SessionMiddleware):
-#     def __init__(self, app, secret_key: str, redis_client):
-#         super().__init__(app, secret_key=secret_key)
-#         self.redis_client = redis_client
-
-#     async def dispatch(self, request: Request, call_next):
-#         session_id = request.cookies.get("session_id")
-#         if not session_id:
-#             session_id = str(uuid.uuid4())
-#             request.state.session_id = session_id
-#             response = await call_next(request)
-#             response.set_cookie(key="session_id", value=session_id, httponly=True)
-#             await self.redis_client.setex(
-#                 session_id, 3600, ""
-#             )  # Set session with TTL of 1 hour
-#             return response
-#         else:
-#             request.state.session_id = session_id
-#             response = await call_next(request)
-#             return response
-
 class RedisSessionMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, secret_key: str, redis_client):
         super().__init__(app)
@@ -39,7 +18,6 @@ class RedisSessionMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next):
         session_id = request.cookies.get("session_id")
-        print(request.cookies)
         if session_id:
             request.state.session_id = session_id
             logger.info(f"Existing session_id: {session_id}")
