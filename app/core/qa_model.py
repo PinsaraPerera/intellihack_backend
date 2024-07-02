@@ -48,11 +48,13 @@ def load_llm():
     return llm
 
 
-def get_context_from_vector_db(query: str, request: Request, user_email: str):
-    session_id = request.session.get('session_id')
+async def get_context_from_vector_db(query: str, request: Request, user_email: str):
+    session_id = request.state.session_id
     if not session_id:
-        session_id = request.session['session_id'] = str(uuid.uuid4())
-    db = load_vector_db(session_id, user_email)
+        session_id = str(uuid.uuid4())
+        request.state.session_id = session_id
+
+    db = await load_vector_db(session_id, user_email)
 
     docs_with_scores = db.similarity_search_with_score(query, k=4)
 
@@ -64,6 +66,7 @@ def get_context_from_vector_db(query: str, request: Request, user_email: str):
         context = "\n".join(
             [result[0].page_content.replace("\n", " ") for result in top_results]
         )
+        print(f"Context: {context}")
         return context
     return ""
 
@@ -95,8 +98,8 @@ class CustomHandler(BaseCallbackHandler):
         logger.info(f"Prompt:\n{formatted_prompts}")
 
 
-def final_result(query, chat_history, request: Request, user_email: str):
-    context = get_context_from_vector_db(query, request, user_email)
+async def final_result(query, chat_history, request: Request, user_email: str):
+    context = await get_context_from_vector_db(query, request, user_email)
     prompt = set_custom_prompt()
     chain = qa_bot(prompt)
     input_data = {"chat_history": chat_history, "question": query, "context": context}

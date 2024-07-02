@@ -3,8 +3,8 @@ from .llm import llms
 from .tools import QuizGeneratingToolset
 
 class QuizGeneratingAgent():
-    def __init__(self, request, user_email):
-        self.toolset = QuizGeneratingToolset(request, user_email)
+    def __init__(self, request, user_email, vectorstore):
+        self.toolset = QuizGeneratingToolset(request, user_email, vectorstore)
 
     def questionGeneratingAgent(self):
         return Agent(

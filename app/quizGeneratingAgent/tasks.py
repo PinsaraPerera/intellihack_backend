@@ -58,7 +58,7 @@ class QuizGeneratingTask:
             ),
             expected_output=(
                 f"""
-            A well-formatted JSON output as specified.
+            A well-formatted JSON output as specified. All the properties must be enclosed in double quotes.
             """
             ),
             agent=agent,

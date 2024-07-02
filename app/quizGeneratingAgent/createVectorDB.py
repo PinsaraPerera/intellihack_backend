@@ -5,11 +5,13 @@ from pathlib import Path
 import uuid
 
 
-def search_vector_db(query: str, request: Request, user_email: str):
-    session_id = request.session.get("session_id")
+async def search_vector_db(query: str, request: Request, user_email: str):
+    session_id = request.state.session_id
     if not session_id:
-        session_id = request.session["session_id"] = str(uuid.uuid4())
-    db = load_vector_db(session_id, user_email)
+        session_id = str(uuid.uuid4())
+        request.state.session_id = session_id
+
+    db = await load_vector_db_for_mcq(session_id, user_email)
 
     results = db.search(query=query, search_type="similarity", k=5)
 

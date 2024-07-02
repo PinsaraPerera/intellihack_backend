@@ -1,10 +1,15 @@
 from .agents import QuizGeneratingAgent
 from .tasks import QuizGeneratingTask
+from app.core.openAI_embeddings import download_vector_db
 from crewai import Crew
 import json
 
 def main(no_of_questions, request, user_email):
-    agents = QuizGeneratingAgent(request=request, user_email=user_email)
+
+    # create vectorstore
+    vectorstore = download_vector_db(session_id=request.state.session_id, user_email=user_email)
+
+    agents = QuizGeneratingAgent(request=request, user_email=user_email, vectorstore=vectorstore)
     tasks = QuizGeneratingTask()
 
     # create agents

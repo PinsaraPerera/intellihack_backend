@@ -1,18 +1,15 @@
 import os
 from redis import Redis
+import aioredis
 from dotenv import load_dotenv
 
 load_dotenv()
 
 # Redis cloud client setup
-# redis_host = os.getenv("REDIS_HOST", "localhost")
-# redis_port = int(os.getenv("REDIS_PORT", 6379))
+redis_host = os.getenv("REDIS_HOST", "localhost")
+redis_port = int(os.getenv("REDIS_PORT", 6379))
 # redis_client = Redis(host=redis_host, port=redis_port, db=0)
-
-# Redis local client setup
-redis_host = "localhost"
-redis_port = 6379
-redis_client = Redis(host=redis_host, port=redis_port, db=0)
+redis_client = aioredis.from_url(f"redis://{redis_host}:{redis_port}", decode_responses=False)
 
 
 BUCKET_NAME = os.getenv("BUCKET_NAME")
@@ -44,7 +41,9 @@ You are a diagram-generating bot. You have access to the scenario as a text in c
 
 Your response should be a single block of text representing the Mermaid diagram notation. The response must be able to be directly rendered as a diagram in the Mermaid renderer JavaScript module.
 
-Ensure the response is accurate and directly reflects the given scenario. The user don't have a good knowledge of diagram representation, so provide the diagram representation in a simple and easy manner.
+Ensure the response is accurate and directly reflects the given scenario. The user don't have a good knowledge of diagram representation, so provide the diagram representation in a simple and easy manner. Start with graph TD and end with semicolon. Don't add any
+
+additional formatting rather than that.
 
 """
 
@@ -72,7 +71,8 @@ graph_human_template = """
 Scenario : 
 {Scenario}
 
-Do not include "```mermaid" only in front of the response. Choose the best possible diagram type for the given scenario and the appropriate diagram representation for selected type. 
+Do not include "```mermaid" only in front of the response. Choose the best possible diagram type for the given scenario and the appropriate diagram representation for selected type. remove all ``` from the 
+response.
 """
 
 summary_system_template = """
