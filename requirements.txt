@@ -11,7 +11,7 @@ python-multipart
 uvicorn
 openai
 tiktoken
-crewai
+crewai==0.35.7
 crewai[tools]
 unstructured
 python-dotenv
