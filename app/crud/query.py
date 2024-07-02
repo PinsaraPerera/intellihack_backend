@@ -7,7 +7,6 @@ from app.core.qa_model import final_result as qa_final_result
 from app.core.graph_model import final_result as graph_final_result
 from app.core.summarise_model import final_result as summary_final_result
 from app.quizGeneratingAgent.main import main as quiz_main
-from app.core.openAI_embeddings import clear_vector_db_cache
 import json
 
 from app.quizGeneratingAgent.createVectorDB import search_vector_db
@@ -153,7 +152,5 @@ def create_quiz(chat: query_schema.QuizCreate, request: Request):
         response=response_model,
         date_created=datetime.utcnow()
     )
-
-    clear_vector_db_cache()
 
     return questions

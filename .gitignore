@@ -14,3 +14,4 @@ vectorstores
 app.log
 cloud-run-redis-cloud.yml
 trained_agents_data.pkl
+sample.txt
