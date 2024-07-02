@@ -26,6 +26,10 @@ jobs:
           echo PRIVATE_IP=${{ secrets.PRIVATE_IP }} >> .env
           echo OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} >> .env
           echo BUCKET_NAME=${{ secrets.BUCKET_NAME }} >> .env
+          echo REDIS_HOST=${{ secrets.REDIS_HOST }} >> .env
+          echo REDIS_PORT=${{ secrets.REDIS_PORT }} >> .env
+          echo LANGCHAIN_TRACING_V2=true >> .env
+          echo LANGCHAIN_API_KEY=${{ secrets.LANGCHAIN_API_KEY }} >> .env
 
       # Save .env file as artifact
       - name: Upload .env file
