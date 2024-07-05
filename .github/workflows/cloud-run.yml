@@ -30,6 +30,7 @@ jobs:
           echo REDIS_PORT=${{ secrets.REDIS_PORT }} >> .env
           echo LANGCHAIN_TRACING_V2=true >> .env
           echo LANGCHAIN_API_KEY=${{ secrets.LANGCHAIN_API_KEY }} >> .env
+          echo AGENT_SERVICE_URL=${{ secrets.AGENT_SERVICE_URL }} >> .env
 
       # Save .env file as artifact
       - name: Upload .env file
