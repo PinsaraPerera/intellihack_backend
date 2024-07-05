@@ -32,6 +32,14 @@ class CustomResponse(BaseModel):
     response: Dict[str, Optional[str]]
     date_created: datetime = Field(default_factory=datetime.utcnow)
 
+class ResearchCreate(BaseModel):
+    user_id: int
+    username: str
+    query: str
+    
+class ResearchResponse(BaseModel):
+    response: str
+
 class QuizCreate(BaseModel):
     user_id: int
     username: str

@@ -11,7 +11,7 @@ redis_port = int(os.getenv("REDIS_PORT", 6379))
 # redis_client = Redis(host=redis_host, port=redis_port, db=0)
 redis_client = aioredis.from_url(f"redis://{redis_host}:{redis_port}", decode_responses=False)
 
-
+AGENT_SERVICE_URL = os.getenv("AGENT_SERVICE_URL")
 BUCKET_NAME = os.getenv("BUCKET_NAME")
 DATA_FOLDER = "data"
 RESOURCE_FOLDER = "resources"
