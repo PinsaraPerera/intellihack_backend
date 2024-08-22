@@ -1,4 +1,4 @@
-name: intellihack-cloud-run
+name: viewmo-cloud-run
 
 on:
   push:
@@ -74,7 +74,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          IMAGE=gcr.io/${{ secrets.PROJECT_ID }}/intellihack-backend:$GITHUB_SHA
+          IMAGE=gcr.io/${{ secrets.PROJECT_ID }}/viewmo-ai-platform-backend:$GITHUB_SHA
           docker build -t $IMAGE .
           docker push $IMAGE
 
@@ -99,8 +99,8 @@ jobs:
 
       - name: Deploy to Cloud Run
         run: |
-          IMAGE=gcr.io/${{ secrets.PROJECT_ID }}/intellihack-backend:$GITHUB_SHA
-          gcloud run deploy intellihack-backend \
+          IMAGE=gcr.io/${{ secrets.PROJECT_ID }}/viewmo-ai-platform-backend:$GITHUB_SHA
+          gcloud run deploy viewmo-ai-platform-backend \
             --image $IMAGE \
             --region ${{ secrets.REGION }} \
             --platform managed \
